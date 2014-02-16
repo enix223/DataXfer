@@ -1,0 +1,13 @@
+<div id="left-menu" class="panel panel-info">
+	<div class="panel-heading">
+		:: 菜单 ::
+	</div>
+	<div class="panel-body">
+		<ul class="nav nav-pills nav-stacked">
+			<li class="#if($active_menu == 'valuation') active #end">
+				<a  href="/efund/valuation"> <span class="badge pull-right">${total_count}</span> 基金估值</a>
+			</li>
+			<li class="#if($active_menu == 'netvalue') active #end"><a  href="/efund/netvalue">基金净值</a></li>
+		</ul>
+	</div>	
+</div>

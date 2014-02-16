@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<title>Data Transfer Tools@CEL</title>
+<meta name="description" content="" />
+<meta name="author" content="Enix" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="stylesheet" href="../assets/css/bootstrap.css" />
+<link rel="stylesheet" href="../assets/css/bootstrap-datetimepicker.min.css" />    
+<link rel="stylesheet" href="../assets/css/main.css" />    
+<script  src="../assets/js/jquery-1.9.1.min.js" ></script>
+<script  src="../assets/js/bootstrap.js" ></script>
+<script  src="../assets/js/moment.min.js" ></script>
+<script  src="../assets/js/bootstrap-datetimepicker.min.js" ></script>  
+<style type="text/css">	
+	.collapse-header > .panel-collapse > .panel-body >.nav-pills > li.active > a,
+	.collapse-header > .panel-collapse > .panel-body > .nav-pills > li.active > a:hover,
+	.collapse-header > .panel-collapse > .panel-body > .nav-pills > li.active > a:focus {
+	  color: #666;
+	  background-color:#faebcc;
+	}
+	
+	.collapse-header > .panel-heading > a,
+	.collapse-header > .panel-heading > a:hover,
+	.collapse-header > .panel-heading > a:focus{
+		color: #c09853;
+		text-decoration: none;
+	}
+</style>
+<script type="text/javascript">
+	$(function(){
+		$("#source").keyup(function(e){
+			$("#sql").val("SELECT * FROM " + $("#source").val());
+			$("#target").val($("#source").val().replace(".","_"));
+		});
+	});
+</script>
+</head>
+<body>
+#parse("views/layout/header.html")
+
+<div class="container">
+
+<!-- Message -->
+#if(${idMsg} || $sourceMsg || $sqlMsg || $targetMsg || $truncateMsg || $processMsg)
+<div class="row">
+	<div class="col-md-12">
+		<div class="alert alert-danger">
+			<p><strong>错误</strong></p>
+			<p>$!{idMsg}</p>
+			<p>$!{sourceMsg}</p>
+			<p>$!{sqlMsg}</p>
+			<p>$!{targetMsg}</p>
+			<p>$!{truncateMsg}</p>
+			<p>$!{processMsg}</p>
+		</div>
+	</div>
+</div>
+#end
+
+<div class="row">
+	<div class="col-md-8">		
+		<form class="form-horizontal" role="form" action="${action}" method="post">
+		  <div class="form-group">
+		    <label for="source" class="col-sm-4 control-label">数据源表*</label>
+		    <div class="col-sm-8">
+		      <input type="text" class="form-control" name="source" id="source" value="$!{entry.source}" placeholder="source table name, eg. LIBJ12.CIPNAME0">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="sql" class="col-sm-4 control-label">数据源SELECT SQL*</label>
+		    <div class="col-sm-8">
+		      <textarea class="form-control" id="sql" name="sql" rows="3" cols="1">$!{entry.sql}</textarea>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="target" class="col-sm-4 control-label">目标数据表*</label>
+		    <div class="col-sm-8">
+		      <input type="text" class="form-control" name="target" id="target" value="$!{entry.target}"  placeholder="Target table name, eg. LIBJ12_CIPNAME0">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="truncate" class="col-sm-4 control-label">是否清空该表*</label>
+		    <div class="col-sm-8">
+		    	<select class="form-control" name="truncate" id="truncate">
+				  <option value="Y" #if($entry.truncate == "Y") selected="selected" else "" #end>Yes, 数据传输前清空该表</option>
+				  <option value="N" #if($entry.truncate == "N") selected="selected" else "" #end>No, 数据传输前不清空该表</option>
+				</select>		      
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="process" class="col-sm-4 control-label">是否处理该记录*</label>
+		    <div class="col-sm-8">
+		    	<select class="form-control" name="process" id="process">
+				  <option value="Y" #if($entry.process == "Y") selected="selected" else "" #end>Yes, 处理本记录</option>
+				  <option value="N" #if($entry.process == "N") selected="selected" else "" #end>No, 忽略本记录</option>
+				</select>		      
+		    </div>
+		  </div>
+		  <hr />
+		  <div class="form-group">
+		    <label for="process" class="col-sm-4 control-label">运行时间计划</label>
+		    <div class="col-sm-8">
+		    	<span class="help-block">以下选项用于设置本记录只在规定的时间下才被处理，以下选项只接受数字，多个数字之间用逗号(,)分隔。连续的数字用横线(-)相连。<strong>默认为*</strong>, 表示该记录忽略该选项，始终运行。</span>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="year" class="col-sm-4 control-label">在该年份中运行</label>
+		    <div class="col-sm-8">
+		      <input type="text" class="form-control" name="year" id="year" value="$!{entry.year}" placeholder="Years to run">		
+		      <span class="help-block">例如, <strong>2013,2014</strong> 表示本记录只在2013年和2014年运行 </span>      
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="month" class="col-sm-4 control-label">在该月份中运行</label>
+		    <div class="col-sm-8">
+		      <input type="text" class="form-control" name="month" id="month" value="$!{entry.month}" placeholder="Month to run">		
+		      <span class="help-block">例如, <strong>1-10</strong> 本记录只在1月份至10月份运行 </span>      
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="day" class="col-sm-4 control-label">在该日运行</label>
+		    <div class="col-sm-8">
+		      <input type="text" class="form-control" name="day" id="day" value="$!{entry.day}" placeholder="Day to run">		
+		      <span class="help-block">例如, <strong>1,4,5</strong> 表示当当前的日期为1号，4号，5号的时候，就处理该记录</span>      
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="specify" class="col-sm-4 control-label">指定日期</label>
+		    <div class="col-sm-8">
+		      <input type="text" class="form-control" name="specify" id="specify" value="$!{entry.specify}" placeholder="Specify the dates to run">		
+		      <span class="help-block">例如, <strong>20140101,20140228</strong> 表示在2014-01-01，和2014-02-28这两天运行。 </span>      
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="pkg" class="col-sm-4 control-label">Package</label>
+		    <div class="col-sm-8">
+		      <input type="text" class="form-control" name="pkg" id="pkg" value="$!{entry.pkg}" placeholder="Specify the package">		
+		      <span class="help-block">例如, PTOS Package </span>      
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <div class="col-sm-offset-4 col-sm-8">
+		      <input type="hidden" name="id" value="$!{entry.id}" />
+		      <button type="submit" class="btn btn-success">保存</button>
+		      <a href="/DataXfer/admin" class="btn btn-danger">取消</a>
+		    </div>
+		  </div>
+		</form>
+	</div>
+</div>
+</div>
+</body>
+</html>

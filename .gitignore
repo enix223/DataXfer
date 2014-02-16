@@ -1,0 +1,11 @@
+/build
+/target
+/WebContent/WEB-INF/lib
+/WebContent/WEB-INF/classes
+/log
+
+*.db
+*.class
+*.pyc
+*.pyo
+*.log

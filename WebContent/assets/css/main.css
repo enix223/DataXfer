@@ -1,0 +1,32 @@
+#brand{
+	color:#FF9900;
+	font-weight: bold;
+}
+
+
+#header .header-btn{
+	color: #fff;	
+}
+
+#footer{
+	margin-top: 20px;
+	text-align:center;
+	color: #999;
+	border-top: 1px dashed #ddd;
+}
+
+#dp-menu{
+	color: #fff;
+}
+
+.table-sm{
+	font-size: 12px;
+}
+
+.goup{
+	color:#DC0000;
+}
+
+.godown{
+	color:#097C25;
+}

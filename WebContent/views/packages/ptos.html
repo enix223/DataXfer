@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>DataXfer</title>
+  <meta name="description" content="" />
+  <meta name="author" content="Enix" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="assets/css/bootstrap.css" />  
+  <link rel="stylesheet" href="assets/css/idbs.css" />    
+  <script  src="assets/js/jquery-1.9.1.min.js" ></script>
+  <script  src="assets/js/bootstrap.js" ></script>
+  <script type="text/javascript">
+  		$(function(){
+  			$("#btn-run").click(function(){
+  				$("#btn-run").addClass("disabled");
+  				$("#message").html("");
+  				$("#alert-modal").modal("show");
+  			});
+  		});
+  </script>
+</head>
+<body>
+
+#parse("views/layout/header.html")
+
+<div class="container">
+	<!-- Function header -->
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">			
+			<h4>Run PTOS Report Packages</h4>
+		</div>
+	</div>	
+	
+	<!-- Filter control -->
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">					
+			<div class="panel panel-success">
+			    <div class="panel-heading">
+			      <h4 class="panel-title">
+			        <a data-toggle="collapse" data-parent="#accordion" href="#parts-menu" class="collapsed">
+			          <span class="glyphicon glyphicon-filter"></span> Action
+			        </a>
+			      </h4>
+			    </div>
+			    <div id="parts-menu" class="panel-collapse collapse in">
+			    	<div class="panel-body">
+			    		<p class="text-primary">Script: LIBJ12COG/CUSALR</p>
+			    		<p>此脚本所生成的数据用于如下报表</p>
+			    		<ol>
+			    			<li>Sharepoint PSSR Portal - PSSR PTOS Report Detail (J012 only)</li>
+			    			<li>Sharepoint PSSR Portal - PSSR PTOS Report Summary (J012 only)</li>
+			    			<li>Sharepoint PSSR Portal - PSSR PTOS Report Summary (J010 only)</li>
+			    			<li>Sharepoint PSSR Portal - PSSR PTOS Report Detail (J010 only)</li>
+			    			<li>Sharepoint PSSR Portal - Customer_Profile_1</li>
+			    			<li>Sharepoint PSSR Portal - Customer_Profile_2</li>
+			    			<li>Sharepoint PSSR Portal - PSSR Dashboard</li>
+			    			<li>Sharepoint Saleslink Portal - PSSR Coverage report</li>
+			    		</ol>	
+			    		<p class="text-primary">请按如下步骤完成数据传输</p>		    		
+			    		<ol>
+			    			<li>点击按钮 <b>[1. Run DBS script ]</b> 运行DBS的script生成报表文件，等待该script运行完毕，并<b>确保该script的return消息为 run script ended with 0 monitored exception</b>，然后再运行下一步。 </li>
+			    			<li>请确保<a href="admin">数据传输项</a>中已添加上一script所生成的数据文件，并在package一栏中指定为<b>PTOS</b>, 如未添加，请点击此<a href="ptosConfig">链接</a>导入数据。</li>
+			    			<li>点击 <b>[2. Transfer]</b> 按钮，把AS400的数据传送到MSSQL数据库。</li>			    			
+			    		</ol>			    		
+			    		<a id="btn-run" href="ptosReports" class="btn btn-danger"> 1. Run DBS script</a>
+			    		<a id="btn-transfer" href="ptosReports" class="btn btn-danger"> 2. Transfer </a>
+			    	</div>
+			    </div>		    
+		    </div>
+		</div>
+	</div>
+	
+	<!-- Data content -->
+	#if($message)
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<div class="panel panel-info">
+				<div class="panel-heading">运行结果</div>
+				<div class="panel-body">
+					<p id="message" class="text-danger">$message</p>
+				</div>				
+			</div>
+		</div>
+	</div>
+	#end
+	
+	<!-- Modal -->
+	<div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">	        
+	        <h4 class="modal-title" id="myModalLabel">请等待...</h4>
+	      </div>
+	      <div class="modal-body">
+	      	<h4 class="text-danger">再脚本运行过程中，请不要刷新或者关闭此页面，并耐心等待!!</h4>
+	      </div>	      
+	    </div>
+	  </div>
+	</div>
+
+</div>
+
+</body>
+</html>
