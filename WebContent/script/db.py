@@ -4,9 +4,10 @@ Created on 2013-3-8
 
 @author: Enix Yu
 '''
-
-from java.lang import *
-from java.sql import *
+from java.lang import Class
+from java.sql import SQLException
+from java.sql import DriverManager
+from java.sql import ResultSet
 from org.apache.log4j import Logger
 #from log import Logger
 import mylog

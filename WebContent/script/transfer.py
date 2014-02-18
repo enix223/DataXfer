@@ -5,16 +5,17 @@ Created on 2013-3-8
 
 @author: Enix Yu
 '''
+from __future__ import with_statement
 from java.lang import *
 from com.cel.dataxfer.jython import TransferType
 from org.apache.log4j import Logger
-import sys
+import sys, os
 from config import mainconfig
 from db import DBUtils
 #from log import Logger
 import mylog
 from time import time
-from utils.parser import Parser
+from parser import Parser
 
 ## --------------------------
 ## Return code
@@ -152,12 +153,26 @@ class Transfer(TransferType):
             self.logger.error("Transfer crupted. %s" % str(e))
             
     def begin(self):
+        #check the transfer.pid file exist or not
+        if(os.path.exists("transfer.pid")):
+            with open("transfer.pid") as f:
+                #pid = f.read()
+                return                    
+        else:
+            #create pid file if not exist
+            pid = os.getpid()
+            with open("transfer.pid", "wb+") as f:
+                f.write(str(pid))
+        
         self.msgs.append("Transfer start...")
         self.logger.info("-----------------------Transfer start-----------------------")   
         rc = self.loopTables()    
         self.msgs.append("Transfer successful ended.")
         self.logger.info("---------------------Transfer successful.----------------")
         self.logger.info(" ")
+        
+        #clear the pid
+        os.remove("transfer.pid")
         return rc
     
     def getMsg(self):

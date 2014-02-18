@@ -4,6 +4,12 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 	
+	<!-- Quartz scheduler listener -->
+	<listener>
+    	<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+  	</listener>
+  	
+  	<!-- JFinal framework -->
 	<filter>
 		<filter-name>jfinal</filter-name>
 		<filter-class>com.jfinal.core.JFinalFilter</filter-class>

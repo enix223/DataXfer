@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job-scheduling-data
+	xmlns="http://www.quartz-scheduler.org/xml/JobSchedulingData"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.quartz-scheduler.org/xml/JobSchedulingData http://www.quartz-scheduler.org/xml/job_scheduling_data_1_8.xsd"
+	version="1.8">
+
+	<schedule>
+		<job>
+			<name>TransferJob</name>
+			<group>DataBatchJobs</group>
+			<description>Trigger the data migration script</description>
+			<job-class>com.cel.dataxfer.scheduler.TransferJob</job-class>
+		</job>
+
+		<trigger>
+			<cron>
+				<name>TransferTrigger</name>
+				<job-name>TransferJob</job-name>
+				<job-group>DataBatchJobs</job-group>				
+				<!-- trigger every morning at 7:00 am -->
+				<!-- Good morning guy... -->
+				<cron-expression>0 0/5 0-23 * * ?</cron-expression>
+			</cron>
+		</trigger>
+	</schedule>
+</job-scheduling-data>
