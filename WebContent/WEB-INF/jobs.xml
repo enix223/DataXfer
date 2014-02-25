@@ -20,7 +20,7 @@
 				<job-group>DataBatchJobs</job-group>				
 				<!-- trigger every morning at 7:00 am -->
 				<!-- Good morning guy... -->
-				<cron-expression>0 0/5 0-23 * * ?</cron-expression>
+				<cron-expression>0 0 7 * * ?</cron-expression>
 			</cron>
 		</trigger>
 	</schedule>

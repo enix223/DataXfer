@@ -6,7 +6,6 @@ Created on 2013-3-11
 '''
 from config import logconfig
 from datetime import datetime
-#import logging.config
 import logging
 import os
 import sys

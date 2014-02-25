@@ -48,9 +48,9 @@ public class UserPackage extends AppController {
 		header.add("source");
 		header.add("sql");
 		header.add("target");
-		header.add("truncate");
+		header.add("truncate_flag");
 		header.add("process");
-		header.add("package");
+		header.add("pkg");
 		
 		if(!excel.validateTemplate(0, header)){
 			setAttr("message", "Excel template format not correct, please check. [" + path + "]");
@@ -75,7 +75,7 @@ public class UserPackage extends AppController {
 			entryConfig.set("source", source);
 			entryConfig.set("sql", sql);
 			entryConfig.set("target", target);
-			entryConfig.set("truncate", truncate);
+			entryConfig.set("truncate_flag", truncate);
 			entryConfig.set("process", process);
 			entryConfig.set("year", "*");
 			entryConfig.set("month", "*");

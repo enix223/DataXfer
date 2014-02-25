@@ -8,34 +8,29 @@ from java.lang import Class
 from java.sql import SQLException
 from java.sql import DriverManager
 from java.sql import ResultSet
-from org.apache.log4j import Logger
-#from log import Logger
-import mylog
+from log import Logger
 import config
-import traceback
-import sys
 
 class DBUtils:
     
-    dbconfig = config.dbconfig 
         
     def getStatement(self):
         if not self.__stmt__:
             self.__stmt__ = self.conn.createStatement()
     
     def __init__(self, dbType):
-        self.logger = Logger.getRootLogger()
+        self.logger = Logger.getLog()
         self.conn = None
         self.__stmt__ = None
         self.__rs__ = None
-        config = self.dbconfig[dbType]        
+        config = dbType      
         if config:
             try:                
                 Class.forName(config["DRIVER"]).newInstance()
                 self.conn = DriverManager.getConnection(config["URL"], config["USER"], config["PASSWD"])
             except SQLException ,e:
                 self.logger.error("(db.py => __init__)Get %s connection error! \n %s" % (dbType,str(e)))
-                raise Exception
+                raise Exception        
             
     def close(self):
         try:

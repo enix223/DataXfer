@@ -26,7 +26,7 @@ public class User extends Controller{
 		if(remember != null && remember.equals("on")){
 			setCookie("username", username, REMEMBER_COOKIE_AGES);
 		}
-		Users users = Users.dao.findFirst("select 1 from users where username=? and password=?", username, password);		
+		Users users = Users.dao.findFirst("select 1 from DataXfer_users where username=? and password=?", username, password);		
 		if(users == null){
 			setAttr("invalidLogin", "User name or password invalid.");
 			renderVelocity("login.html");

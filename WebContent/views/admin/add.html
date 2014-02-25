@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<title>Data Transfer Tools@CEL</title>
+<title>DataXfer@CEL</title>
 <meta name="description" content="" />
 <meta name="author" content="Enix" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,6 +66,16 @@
 	<div class="col-md-8">		
 		<form class="form-horizontal" role="form" action="${action}" method="post">
 		  <div class="form-group">
+		    <label for="source_ds" class="col-sm-4 control-label">数据源 DataSource</label>
+		    <div class="col-sm-8">		       
+		       <select class="form-control" name="source_id" id="source_id">
+		       	  #foreach($ds in $datasources)
+				  <option value="${ds.id}" #if($entry.source_id == $ds.id) selected="selected" else "" #end>${ds.dsname}</option>
+				  #end				
+				</select>		      
+		    </div>
+		  </div>
+		  <div class="form-group">
 		    <label for="source" class="col-sm-4 control-label">数据源表*</label>
 		    <div class="col-sm-8">
 		      <input type="text" class="form-control" name="source" id="source" value="$!{entry.source}" placeholder="source table name, eg. LIBJ12.CIPNAME0">
@@ -78,6 +88,16 @@
 		    </div>
 		  </div>
 		  <div class="form-group">
+		    <label for="target_ds" class="col-sm-4 control-label">目标 DataSource</label>
+		    <div class="col-sm-8">		       
+		       <select class="form-control" name="target_id" id="target_id">
+		          #foreach($ds in $datasources)
+				  <option value="${ds.id}" #if($entry.target_id == $ds.id) selected="selected" else "" #end>${ds.dsname}</option>
+				  #end				
+				</select>		      
+		    </div>
+		  </div>
+		  <div class="form-group">
 		    <label for="target" class="col-sm-4 control-label">目标数据表*</label>
 		    <div class="col-sm-8">
 		      <input type="text" class="form-control" name="target" id="target" value="$!{entry.target}"  placeholder="Target table name, eg. LIBJ12_CIPNAME0">
@@ -87,8 +107,8 @@
 		    <label for="truncate" class="col-sm-4 control-label">是否清空该表*</label>
 		    <div class="col-sm-8">
 		    	<select class="form-control" name="truncate" id="truncate">
-				  <option value="Y" #if($entry.truncate == "Y") selected="selected" else "" #end>Yes, 数据传输前清空该表</option>
-				  <option value="N" #if($entry.truncate == "N") selected="selected" else "" #end>No, 数据传输前不清空该表</option>
+				  <option value="Y" #if($entry.truncate_flag == "Y") selected="selected" else "" #end>Yes, 数据传输前清空该表</option>
+				  <option value="N" #if($entry.truncate_flag == "N") selected="selected" else "" #end>No, 数据传输前不清空该表</option>
 				</select>		      
 		    </div>
 		  </div>
@@ -127,6 +147,13 @@
 		    <div class="col-sm-8">
 		      <input type="text" class="form-control" name="day" id="day" value="$!{entry.day}" placeholder="Day to run">		
 		      <span class="help-block">例如, <strong>1,4,5</strong> 表示当当前的日期为1号，4号，5号的时候，就处理该记录</span>      
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="weekday" class="col-sm-4 control-label">在该星期运行</label>
+		    <div class="col-sm-8">
+		      <input type="text" class="form-control" name="weekday" id="weekday" value="$!{entry.weekday}" placeholder="Weekday to run">		
+		      <span class="help-block">0-6, 0代表星期一，例如, <strong>1,4,5</strong> 表示星期2，3，4的时候，就处理该记录</span>      
 		    </div>
 		  </div>
 		  <div class="form-group">

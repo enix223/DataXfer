@@ -1,0 +1,39 @@
+1) Release Note
+==========================
+1. set the sqlite3.exe dir in environment variable
+2. set the JBOSS_HOME system level environment variable
+3. set the JAVA_HOME system level environment variable
+4. set the JYTHON_HOME system level environment variable
+
+2) JBOSS package install
+==========================
+1. unpack jboss-as-7.1.1.Final.zip to d:/jboss
+2. unpack jboss-native-2.0.10-windows-x86-ssl.zip to d:/jboss/bin
+3. modify service.bat according to my blog: http://my.oschina.net/enixyu/blog/201400
+4. start the jboss service
+5. create management user
+   5.1 open the script in %JBOSS_HOME%/bin/add-users.bat
+   5.2 choose a
+   5.3 enter to skip the managereleam
+   5.4 enter the user name to be created
+   5.5 enter the password
+   5.6 choose yes to confirm added.
+
+
+3) First time Deployment flow
+==========================
+1. open command line, and change the dir to DataXfer project
+2. deploy the project to the target server.
+   If you want to change the target server ip address, please edit pom.xml
+   find the hostname, and change the ip to your target ip address.
+3. run command: mvn jboss-as:deploy
+
+
+4) Not the first time deployment flow
+===========================
+1. Login jboss management site htpp://[server-ip]:9990
+2. select <Manage Deployments>
+3. select DataXfer.war and click remove button to remove it.
+4. restart the JBOSS service in the server
+5. deploy the project with flow 3)
+  

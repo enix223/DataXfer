@@ -8,38 +8,10 @@ from datetime import datetime
 import os, sys
 
 dbconfig = { 
-    "QATEST":{ 
-        "DRIVER": "com.ibm.as400.access.AS400JDBCDriver", 
-        "URL": "jdbc:as400://192.168.231.144/LIBJ12COG", 
-        "USER": "NOELT", 
-        "PASSWD": "NOEL123"
-    },         
-    "PRODUCTION":{ 
-        "DRIVER": "com.ibm.as400.access.AS400JDBCDriver", 
-        "URL": "jdbc:as400://192.168.231.215/LIBJ12COG", 
-        "USER": "CRYSTALDLD", 
-        "PASSWD": "dj7whj4q"
-    }, 
-    "MSSQL":{
-        "DRIVER": "net.sourceforge.jtds.jdbc.Driver", 
-        "URL": "jdbc:jtds:sqlserver://localhost:1433;DatabaseName=J12_DBS_DATA",
-        #"URL": "jdbc:jtds:sqlserver://172.29.25.156:1433;instance=SQLEXPRESS;DatabaseName=DBS", 
-        "USER": "sa", 
-        "PASSWD": "enixyuabc@123"
-        #"PASSWD": "simedarbycn"      
-    },
-    "SHAREPOINT":{
         "DRIVER": "net.sourceforge.jtds.jdbc.Driver", 
         "URL": "jdbc:jtds:sqlserver://172.29.25.25:1433;DatabaseName=J12_DBS_DATA", 
         "USER": "saleslink", 
-        "PASSWD": "saleslink@db"
-    },
-    "SQLITE3":{
-        "DRIVER": "org.sqlite.JDBC",
-        "URL": "jdbc:sqlite://" + (os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), "../database/data.db"))).replace("\\","/"),
-        "USER": None, 
-        "PASSWD": None
-    }           
+        "PASSWD": "saleslink@db"  
 } 
 
 logconfig = {    
@@ -49,7 +21,7 @@ logconfig = {
 }
 
 mainconfig = {
-    "CONFIG_DB": "SQLITE3",
+    "CONFIG_DB": "SHAREPOINT",
     "EXCEL_PATH": '',
     "EXCEL_SHEET_NAME": "sheet1",
     "DB_SOURCE": "PRODUCTION",    

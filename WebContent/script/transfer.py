@@ -5,15 +5,14 @@ Created on 2013-3-8
 
 @author: Enix Yu
 '''
-from __future__ import with_statement
-from java.lang import *
+
 from com.cel.dataxfer.jython import TransferType
-from org.apache.log4j import Logger
-import sys, os
+import sys
+import os
 from config import mainconfig
+from config import dbconfig
 from db import DBUtils
-#from log import Logger
-import mylog
+from log import Logger
 from time import time
 from parser import Parser
 
@@ -37,30 +36,28 @@ class Transfer(TransferType):
     def __init__(self, package):
         self.msgs = []
         self.package = package
-        self.logger = Logger.getRootLogger()
+        self.logger = Logger.getLog()
         self.batch = False
     
     def loopTables(self):
         
         dbType = self.config["DB_TYPE"]
         
-        try:
-            as400 = DBUtils(self.config["DB_SOURCE"])
-            mssql = DBUtils(self.config["DB_TARGET"]) 
-            config_db = DBUtils(self.config["CONFIG_DB"])     
+        try:            
+            config_db = DBUtils(dbconfig)     
             
-            sql = "select * from config"
+            sql = "select * from DataXfer_v_config"
             if self.package != "":
-                sql += " where pkg='" + self.package + "'"
+                sql += " where pkg='" + self.package + "'"                    
                 
-            #row = config_db.s.execute(sql)
             rows = config_db.sQuery(sql)
-            for row in rows:
-                srcTable = row['source']#row[0]
-                srcSQL = row['sql']#row[1]
-                tgrTable = row['target']#row[2]
-                truncate = row['truncate']#row[3]
-                procInd = row['process']#row[4]
+            for row in rows:                
+                
+                srcTable = row['source']
+                srcSQL = row['sql'] 
+                tgrTable = row['target']
+                truncate = row['truncate_flag']
+                procInd = row['process']
                 
                 #schedule
                 yr = row['year']
@@ -72,20 +69,35 @@ class Transfer(TransferType):
                 run = {}
                 run['year'], run['month'], run['day'], run['weekday'], run['specified'] = yr, month, day, weekday, specify
                 parser = Parser(run)
-                
+                                
                 runflag = False
                 # Run condition:
                 # 1. Not in batch mode
                 # 2. In batch mode and hit schedule
                 if((not self.batch) or (self.batch and parser.isRun())):
-                    runflag = True                
+                    runflag = True                                            
                 
                 if(procInd == "Y" and runflag):
+                    
+                    if(row['source_driver'] == None or row['target_driver'] == None):
+                        self.logger.error("Source Table %s data source not set" % srcTable)
+                        continue
+                        
+                    
+                    db_source = DBUtils({"DRIVER": row['source_driver'], 
+                                           "URL": row['source_url'], 
+                                           "USER": row['source_username'], 
+                                           "PASSWD": row['source_passwd']})
+                
+                    db_target = DBUtils({"DRIVER": row['target_driver'], 
+                                           "URL": row['target_url'], 
+                                           "USER": row['target_username'], 
+                                           "PASSWD": row['target_passwd']})
                     # Check whether needed to create table or not
-                    if( not mssql.is_tbl_exist(tgrTable)): #not exist
-                        cols_def = as400.get_tbl_cols(srcTable)
+                    if( not db_target.is_tbl_exist(tgrTable)): #not exist
+                        cols_def = db_source.get_tbl_cols(srcTable)
                         if len(cols_def) != 0 :
-                            mssql.createTable(tgrTable, cols_def, dbType)
+                            db_target.createTable(tgrTable, cols_def, dbType)
                             
                             #for message return
                             self.msgs.append("Table %s created" % tgrTable)
@@ -97,11 +109,13 @@ class Transfer(TransferType):
                             continue
                     else: # does exist
                         if(truncate == "Y"):
-                            mssql.truncateTbl(tgrTable)
-                    self.transfer(as400, mssql, srcSQL, tgrTable) #batch insert
+                            db_target.truncateTbl(tgrTable)
+                    self.transfer(db_source, db_target, srcSQL, tgrTable) #batch insert
+                    
+                    db_source.close() #close on each record finished
+                    db_target.close() #close on each record finished
         
-            as400.close()
-            mssql.close()
+            
             config_db.close()
 
             return 0
@@ -154,15 +168,18 @@ class Transfer(TransferType):
             
     def begin(self):
         #check the transfer.pid file exist or not
-        if(os.path.exists("transfer.pid")):
-            with open("transfer.pid") as f:
-                #pid = f.read()
-                return                    
-        else:
+        #if(os.path.exists("transfer.pid")):
+        #    f = open("transfer.pid")
+        #    pid = f.read()
+        #    f.close()
+        #    self.logger.info("Transfer job is running, pid: %s" % pid)    
+        #    return -1             
+        #else:
             #create pid file if not exist
-            pid = os.getpid()
-            with open("transfer.pid", "wb+") as f:
-                f.write(str(pid))
+        #    pid = os.getpid()
+        #    f = open("transfer.pid", "wb+")
+        #    f.write(str(pid))
+        #    f.close()
         
         self.msgs.append("Transfer start...")
         self.logger.info("-----------------------Transfer start-----------------------")   
@@ -172,7 +189,7 @@ class Transfer(TransferType):
         self.logger.info(" ")
         
         #clear the pid
-        os.remove("transfer.pid")
+        #os.remove("transfer.pid")
         return rc
     
     def getMsg(self):

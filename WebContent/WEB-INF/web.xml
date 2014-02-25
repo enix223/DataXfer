@@ -3,13 +3,30 @@
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
-	
-	<!-- Quartz scheduler listener -->
-	<listener>
-    	<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
-  	</listener>
-  	
-  	<!-- JFinal framework -->
+
+	<!-- Log4j param init  -->
+	<servlet>
+		<servlet-name>log4j-init</servlet-name>
+		<servlet-class>com.cel.dataxfer.core.Log4jInit</servlet-class>
+		<init-param>
+			<param-name>log4j</param-name>
+			<param-value>WEB-INF/properties/log4j.properties</param-value>
+		</init-param>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+
+	<!-- Quartz scheduler init -->
+	<servlet>
+		<servlet-name>quartz-init</servlet-name>
+		<servlet-class>com.cel.dataxfer.core.QuartzInit</servlet-class>
+		<init-param>
+         	<param-name>quartz:config-file</param-name>
+         	<param-value>WEB-INF/properties/quartz.properties</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- JFinal framework -->
 	<filter>
 		<filter-name>jfinal</filter-name>
 		<filter-class>com.jfinal.core.JFinalFilter</filter-class>
@@ -18,7 +35,7 @@
 			<param-value>com.cel.dataxfer.core.AppConfig</param-value>
 		</init-param>
 	</filter>
-	
+
 	<filter-mapping>
 		<filter-name>jfinal</filter-name>
 		<url-pattern>/*</url-pattern>

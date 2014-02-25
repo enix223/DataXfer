@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<title>DataXfer@CEL</title>
+<title>DataXfer@CEL - Data Source</title>
 <meta name="description" content="" />
 <meta name="author" content="Enix" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +39,7 @@
 		$("#btn-edit").click(function(){
 			$(".item-chkbox").each(function(idx, elem){
 				if(elem.checked){					
-					location.href = "admin/edit?id=" + $(elem).val();
+					location.href = "datasource/edit?id=" + $(elem).val();
 				}
 			});			
 		});
@@ -59,7 +59,7 @@
 				alert("请先勾选要删除的记录.");
 				return;
 			}
-			location.href = "admin/delete?ids=" + ids.join(",");
+			location.href = "datasource/delete?ids=" + ids.join(",");
 		});
 		
 		//select all
@@ -68,12 +68,6 @@
 				elem.checked = $("#select-all")[0].checked;			
 			});
 		});
-		
-		//search 
-		$("#btn-search").click(function(){
-			var q = $("#input-query").val();
-			location.href="admin?filter=$!{filter}&query=" + q;
-		});
 	});
 </script>
 </head>
@@ -81,32 +75,6 @@
 #parse("views/layout/header.html")
 
 <div class="container">	
-
-	<!-- Filter panel -->
-	<div class="row">
-	<div class="col-md-12">
-		<div id="filter-panel" class="panel panel-warning collapse-header">
-			<div class="panel-heading">
-				<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel-body" class="collapsed">
-					<span class="glyphicon glyphicon-filter"></span> 筛选</a>
-			</div>
-			<div id="filter-panel-body" class="panel-collapse collapse in">
-				<div class="panel-body">
-					<ul class="nav nav-pills">
-						<li class="disabled"><a>条件</a></li>
-						<li class="#if($filter == 'process') active #end"><a class="btn-sm" href="admin?filter=process&query=$!{query}">会被处理的记录</a></li>									
-						<li class="pull-right"><a href="admin">清除</a></li>
-					</ul>
-					<ul class="nav nav-pills">
-						<li class="disabled"><a>搜索</a></li>								
-						<li><input type="text" class="form-control" id="input-query" name="query" value="$!{query}"></li>
-						<li><button id="btn-search" class="btn btn-info">查询</button></li>
-					</ul>	
-				</div>
-			</div>
-		</div>
-	</div>				
-	</div>
 
 	#if($msg)
 	<div class="row">
@@ -126,9 +94,9 @@
 				<!-- Entry table -->
 				<div class="panel panel-info">
 				<div class="panel-heading">
-					<span class="glyphicon glyphicon-list-alt"></span> 配置Migration记录
+					<span class="glyphicon glyphicon-list-alt"></span> 配置Data Source
 					<div class="pull-right">
-						<a class="btn btn-xs" href="admin/add"> <span class="glyphicon glyphicon-plus"></span> 添加</a>						
+						<a class="btn btn-xs" href="datasource/add"> <span class="glyphicon glyphicon-plus"></span> 添加</a>						
 						<a id="btn-edit" class="btn btn-xs" href="#"> <span class="glyphicon glyphicon-pencil"></span> 编辑</a>
 						<a id="btn-delete" class="btn btn-xs" href="#"> <span class="glyphicon glyphicon-minus"></span> 删除</a>
 					</div>					
@@ -136,70 +104,45 @@
 				<table class="table table-bordered table-condensed table-sm" style="overflow: scroll;">
 					<tbody>
 						<tr>
-							<td rowspan="2"><input id="select-all" type="checkbox" /></td>							
-							<td rowspan="2">数据源Table</td>
-							<td rowspan="2">数据源 DataSource</td>
-							<td rowspan="2">目标table</td>
-							<td rowspan="2">目标 DataSource</td>																				
-							<td rowspan="2">是否清空该表</td>
-							<td rowspan="2">是否处理该记录</td>
-							<td style="text-align: center;" colspan="5">在此时间中运行 Run Schedule</td>
-							<td rowspan="2">Package</td>
+							<td><input id="select-all" type="checkbox" /></td>
+							<td>Data Source Name</td>
+							<td>JDBC Driver</td>													
+							<td>JDBC URL</td>
+							<td>User name</td>
+							<td>Password</td>
 						</tr>	
-						<tr>
-							<td>年</td>
-							<td>月</td>
-							<td>日</td>
-							<td>星期</td>
-							<td>指定日期</td>
-						</tr>
 					#foreach($item in $entries)
 						<tr>
 							<td><input type="checkbox" class="item-chkbox" value="$!{item.id}" /></td>
-							<td><a href="admin/view?id=$!{item.id}">$!{item.source}</a></td>
-							<td><a href="datasource/view?id=$!{item.source_ds_id}">$!{item.source_dsname}</a></td>
-							<td>$!{item.target}</td>
-							<td><a href="datasource/view?id=$!{item.target_ds_id}">$!{item.target_dsname}</a></td>							
-							<td>$!{item.truncate_flag}</td>
-							<td>$!{item.process}</td>
-							<td>$!{item.year}</td>
-							<td>$!{item.month}</td>
-							<td>$!{item.day}</td>
-							<td>$!{item.weekday}</td>
-							<td>
-								#set($spec = $!{item.specify})
-								#if($item.specify && $item.specify.length() > 10)
-									#set($spec = $item.specify.substring(0,10))
-									${spec}...
-								#else
-									$!{item.specify}
-								#end
-							</td>
-							<td>$!{item.pkg}</td>	
+							<td><a href="datasource/view?id=$!{item.id}">$!{item.dsname}</a></td>
+							<td>$!{item.driver}</td>
+							<td>$!{item.url}</td>
+							<td>$!{item.username}</td>
+							<td>***</td>							
 						</tr>
 					#end					
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="14">
+							<td colspan="6">
 							<ul class="pagination">		
 								<!-- First page -->
-								<li class="#if($page == 1) disabled #end"><a href="admin?p=1">
+								<li class="#if($page == 1) disabled #end"><a href="datasource?p=1">
 									<span class="glyphicon glyphicon-fast-backward"></span> </a>
 								</li>
 										
 								<!-- prev page -->				
-								<li class="#if($page == 1) disabled #end"><a href="admin?p=$!{prev_page}&filter=$!{filter}&query=$!{query}">
+								<li class="#if($page == 1) disabled #end"><a href="datasource?p=$!{prev_page}">
 									<span class="glyphicon glyphicon-backward"></span> </a>
 								</li>				
 								
 								<!-- Next page -->				
-								<li class="#if($page >= $total_pages) disabled #end"><a href="admin?p=$!{next_page}&filter=$!{filter}&query=$!{query}">
+								<li class="#if($page >= $total_pages) disabled #end"><a href="datasource?p=$!{next_page}">
 									<span class="glyphicon glyphicon-forward"></span> </a>
 								</li>
 								
 								<!-- Last page -->
-								<li class="#if($page >= $total_pages) disabled #end"><a href="admin?p=$!{total_pages}&filter=$!{filter}&query=$!{query}">
+								<li class="#if($page >= $total_pages) disabled #end"><a href="datasource?p=$!{total_pages}">
 									<span class="glyphicon glyphicon-fast-forward"></span> </a>
 								</li>
 							</ul>
