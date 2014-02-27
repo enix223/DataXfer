@@ -14,6 +14,7 @@ from config import dbconfig
 from db import DBUtils
 from log import Logger
 from time import time
+from datetime import datetime
 from parser import Parser
 
 ## --------------------------
@@ -36,7 +37,8 @@ class Transfer(TransferType):
     def __init__(self, package):
         self.msgs = []
         self.package = package
-        self.logger = Logger.getLog()
+        log_file_name = "history_%s.log" % datetime.now().strftime("%Y%m%d")
+        self.logger = Logger.getLog(log_file_name)
         self.batch = False
     
     def loopTables(self):

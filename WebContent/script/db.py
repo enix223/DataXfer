@@ -10,6 +10,7 @@ from java.sql import DriverManager
 from java.sql import ResultSet
 from log import Logger
 import config
+from datetime import datetime
 
 class DBUtils:
     
@@ -19,7 +20,8 @@ class DBUtils:
             self.__stmt__ = self.conn.createStatement()
     
     def __init__(self, dbType):
-        self.logger = Logger.getLog()
+        log_file_name = "history_%s.log" % datetime.now().strftime("%Y%m%d")
+        self.logger = Logger.getLog(log_file_name)
         self.conn = None
         self.__stmt__ = None
         self.__rs__ = None
