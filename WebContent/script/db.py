@@ -11,6 +11,7 @@ from java.sql import ResultSet
 from log import Logger
 import config
 from datetime import datetime
+import sys
 
 class DBUtils:
     
@@ -49,40 +50,52 @@ class DBUtils:
             pass    
     
     # Query for small table    
-    def sQuery(self, sql):        
-        self.getStatement()
-        self.__rs__ = self.__stmt__.executeQuery(sql)        
-        result = []
-        while(self.__rs__.next()):
-            row ={}
-            rsmd = self.__rs__.getMetaData()
-            for i in range(rsmd.getColumnCount()):
-                row[rsmd.getColumnLabel(i+1)] = self.__rs__.getString(i+1)
-            result.append(row)
-                
-        return result
+    def sQuery(self, sql):
+        try:        
+            self.getStatement()
+            self.__rs__ = self.__stmt__.executeQuery(sql)        
+            result = []
+            while(self.__rs__.next()):
+                row ={}
+                rsmd = self.__rs__.getMetaData()
+                for i in range(rsmd.getColumnCount()):
+                    row[rsmd.getColumnLabel(i+1)] = self.__rs__.getString(i+1)
+                result.append(row)            
+            return result
+        except Exception, e:
+            self.logger.error("(db.py => sQuery)Execute SQL %s error! \n %s" % (sql, str(e)))
+            return None
     
     # Restrict the fetch size for big table
     def tQuery(self, sql, count):
-        self.getStatement()
-        self.__stmt__.setFetchSize(count)
-        self.__rs__ = self.__stmt__.executeQuery(sql)  
+        try:
+            self.getStatement()
+            self.__stmt__.setFetchSize(count)
+            self.__rs__ = self.__stmt__.executeQuery(sql)
+        except Exception, e:
+            self.logger.error("(db.py => tQuery)Execute SQL %s error! \n %s" % (sql, str(e)))  
     
     # Query for big table
     def bQuery(self, sql):
-        self.tQuery(sql, 0)
+        try:
+            self.tQuery(sql, 0)
+        except Exception, e:
+            self.logger.error("(db.py => bQuery)Execute SQL %s error! \n %s" % (sql, str(e)))
     
     # Query for big table, should be run after bQuery()
     def next(self):
-        result = []
-        if(self.__rs__.next()):
-            row ={}
-            rsmd = self.__rs__.getMetaData()
-            for i in range(rsmd.getColumnCount()):
-                row[rsmd.getColumnLabel(i+1)] = self.__rs__.getString(i+1)
-            result.append(row)
-        
-        return result
+        try:
+            result = []
+            if(self.__rs__.next()):
+                row ={}
+                rsmd = self.__rs__.getMetaData()
+                for i in range(rsmd.getColumnCount()):
+                    row[rsmd.getColumnLabel(i+1)] = self.__rs__.getString(i+1)
+                result.append(row)        
+            return result
+        except Exception, e:
+            self.logger.error("(db.py => next)Execute next error! \n %s" % (str(e)))
+            return None
     
     # Perform insert/update/delete for one sql
     def execute(self, sql):
@@ -110,11 +123,9 @@ class DBUtils:
             prestmt.executeBatch()
             prestmt.close()
             return True
-        except Exception, e:
-            self.logger.error("(db.py => executeMany)Execute sql error! \n %s"  % str(e))
-            self.logger.error("sql: %s; params %s" % (sql, str(r)))
-            #je = sys.exc_info()[1]            
-            #je.printStackTrace()  # java part 
+        except:
+            self.logger.error("(db.py => executeMany)Execute sql error! \n %s"  % str(sys.exc_info()[1]))
+            self.logger.error("sql: %s; params %s" % (sql, str(r)))            
             return False
     
     # Truncate table        
