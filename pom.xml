@@ -39,7 +39,7 @@
 				<artifactId>jboss-as-maven-plugin</artifactId>
 				<version>7.4.Final</version>
 				<configuration>
-					<hostname>172.29.25.156</hostname>
+					<hostname>172.29.25.186</hostname>
 					<filename>${project.build.finalName}.war</filename>
 					<username>dean</username>
 					<password>Dean2013</password>
@@ -119,15 +119,9 @@
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
-			<groupId>com.ibm.lotus</groupId>
-			<artifactId>notes</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
