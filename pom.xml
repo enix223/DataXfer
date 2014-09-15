@@ -39,10 +39,10 @@
 				<artifactId>jboss-as-maven-plugin</artifactId>
 				<version>7.4.Final</version>
 				<configuration>
-					<hostname>172.29.25.186</hostname>
+					<hostname>${server}</hostname>
 					<filename>${project.build.finalName}.war</filename>
-					<username>dean</username>
-					<password>Dean2013</password>
+					<username>${username}</username>
+					<password>${password}</password>
 				</configuration>
 				<executions>
 					<execution>
@@ -55,6 +55,29 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<!-- Profiles -->
+	<profiles>
+		<profile>
+			<id>centos</id>
+			<properties>
+				<server>172.29.138.91</server>
+				<username>rlse</username>
+				<password>Rlse@centos123qwe</password>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>xp</id>
+			<properties>
+				<server>172.29.25.186</server>
+				<username>dean</username>
+				<password>Dean2013</password>
+			</properties>
+		</profile>
+	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>com.jfinal</groupId>
